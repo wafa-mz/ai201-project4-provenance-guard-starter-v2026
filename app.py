@@ -163,6 +163,9 @@ def submit():
     if not text or not creator_id:
         return jsonify({"error": "Missing text or creator_id"}), 400
 
+    if len(text) > 10000:
+        return jsonify({"error": "Text is too long"}), 400
+
     content_id = str(uuid.uuid4())
     
     # 1. Run both signals
@@ -185,7 +188,7 @@ def submit():
         model_score=model_score,
         style_score=style_score,
         combined_score=combined_score,
-        label=label,
+        label=label
     )
 
     # 5. Return the response
