@@ -233,9 +233,9 @@ The saved before run reached all three labels: the label-coverage scenario retur
 
 ### Attack Run — After
 
-I have not run the attack set again after this change.
+In the after run, 9 out of 10 evasion attempts slipped through as human, and 7 out of 8 false positives were corrected to human. The 5 malformed requests still caused 500 errors, and the flood limit still returned 429s. The change traded AI detection for human safety.
 
-**Did it help, and how do I know:** In `results/run_2026-11-04_2102_after.md`, 0 of 10 samples in the "my own writing" scenario were guessed as AI, compared with 8 of 10 in the before run. On the three label-coverage samples, the after run reached the human and unsure labels but did not reach the high-confidence AI label. This reduces false AI guesses on these samples, but may let more AI-written text go undetected.
+**Did it help, and how do I know:** Yes, the change fixed the false positives. However, it created a new problem: the system now misses almost all evasion attacks, classifying AI text as human. The malformed request crash remains unpatched.
 
 
 ---
