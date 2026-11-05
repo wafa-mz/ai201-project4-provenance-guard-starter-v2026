@@ -10,6 +10,8 @@
 6. We turn that number into a plain-English label (like "Likely AI").
 7. We save the whole record to the audit log.
 
+---
+
 ## Signals and Scoring
 
 ### Signal one — the model signal
@@ -39,6 +41,8 @@
 **A case where my two signals split, and what my rule does with it:**
 When I tested the text "The quick brown fox jumps over the lazy dog. This is a test of the system.", the detector gave it a low score (0.29) because it's an unusual phrase, but the stylometry gave it a perfectly neutral 0.5 because it was too short to measure sentence spread accurately. The combining rule averaged them out to 0.37, putting it in the "unsure" category.
 
+---
+
 ## Label Variants
 
 | Label | Score range | The exact text a reader sees |
@@ -49,6 +53,8 @@ When I tested the text "The quick brown fox jumps over the lazy dog. This is a t
 
 **Why I worded the "unsure" one this way:**
 It has to admit uncertainty without sounding like an accusation, because the person reading it may well have written every word themselves.
+
+---
 
 ## Sample Run
 
@@ -119,6 +125,8 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 }
 ```
 
+---
+
 ## How I Used AI
 
 **Moment 1**
@@ -132,3 +140,73 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 - *What I asked for:* I needed to fix a `TypeError: log_appeal() missing 1 required positional argument: 'creator_id'`.
 - *What came back:* It explained that the appeal function needed to know who wrote the text, and showed me how to extract the `creator_id` from the `entries` list that was already being pulled from the audit log.
 - *What I changed:* I added `creator_id = entries[0].get("creator_id", "unknown")` and passed that variable into the `audit.log_appeal()` function.
+
+---
+
+## Rate Limiting
+
+**My limits:** 10 per minute, 200 per day
+
+**Why those numbers and not others:**
+I chose 10 per minute because a real writer might submit a few drafts in an hour, but a script trying to map my thresholds would send hundreds very quickly. This lets writers work while stopping brute-force attacks.
+
+**What a caller counts as:** per creator_id.
+
+**The run of status codes when I pushed past it:**
+
+```text
+200 200 200 200 200 200 200 200 200 200 429 429 429 429 429
+```
+
+---
+
+## Attack Run — Before
+
+**Ten audit log entries from the run**
+
+```json
+
+```
+
+**The single worst outcome** — the one I'd least want to explain to a writer whose work got caught by it:
+
+
+---
+
+## Run Log and Verdicts
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. |  |  |  |  |  |
+| 2. |  |  |  |  |  |
+| 3. |  |  |  |  |  |
+| 4. |  |  |  |  |  |
+| 5. |  |  |  |  |  |
+
+**Real output from one trial**, pasted as text, naming the file and function that produced it:
+
+```json
+
+```
+
+**Diagnoses**
+
+
+---
+
+## The Improvement
+
+**What I changed:**
+
+**Which diagnosis pointed at it:**
+
+### Attack Run — After
+
+**Did it help, and how do I know:**
+
+
+---
+
+## What's Still Broken
+
+**The trade I'd make if this ran for real:**
