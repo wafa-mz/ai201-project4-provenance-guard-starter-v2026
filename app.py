@@ -155,6 +155,7 @@ def health():
 
 # ── YOU BUILD THIS ────────────────────────────────────────────────────────────
 @app.post("/submit")
+@limiter.limit(f"{config.RATE_LIMIT_PER_MINUTE}/minute;{config.RATE_LIMIT_PER_DAY}/day")
 def submit():
     payload = request.get_json(silent=True) or {}
     text = payload.get("text", "")
@@ -176,7 +177,7 @@ def submit():
     combined_score = scoring.combine_signals(model_score, style_score)
     
     # 3. Figure out the guess and the human-readable label
-    guess = "ai" if combined_score > 0.5 else "human"
+    guess = "ai" if combined_score >= config.AI_THRESHOLD else "human"
     label = scoring.score_to_label(combined_score)
 
     # 4. Write to the audit log

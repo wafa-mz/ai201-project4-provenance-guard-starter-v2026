@@ -6,12 +6,9 @@ def combine_signals(detector_score, stylometry_score):
     return round(combined, 4)
 
 def score_to_label(score):
-    # High confidence AI
-    if score >= 0.65:
+    if score >= config.AI_THRESHOLD:
         return "This text was likely written by an AI."
-    # Unsure
-    elif score >= 0.35:
+    if score >= config.HUMAN_THRESHOLD:
         return "We are unsure whether this text was written by a human or AI."
-    # High confidence Human
     else:
         return "This text was likely written by a human."
